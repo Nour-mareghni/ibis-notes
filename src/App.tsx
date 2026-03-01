@@ -52,6 +52,7 @@ const STAFF_USERS: UserType[] = [
 
 
 function App() {
+  const [darkMode, setDarkMode] = useState(false);
   const [currentUser, setCurrentUser] = useState<UserType | null>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -64,11 +65,29 @@ function App() {
 
   // Check for saved session on mount
   useEffect(() => {
+    const savedTheme = localStorage.getItem('ibis_theme');
+    if (savedTheme === 'dark') {
+      setDarkMode(true);
+      document.documentElement.classList.add('dark');
+    }
     const savedUser = localStorage.getItem('ibis_current_user');
     if (savedUser) {
       setCurrentUser(JSON.parse(savedUser));
     }
   }, []);
+
+  const toggleTheme = () => {
+  const newTheme = !darkMode;
+  setDarkMode(newTheme);
+
+  if (newTheme) {
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('ibis_theme', 'dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('ibis_theme', 'light');
+  }
+};
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -259,7 +278,7 @@ const handleEditNote = (note: Note) => {
   const datesWithNotes = getDatesWithNotes();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -276,6 +295,14 @@ const handleEditNote = (note: Note) => {
               </div>
             </div>
             <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleTheme}
+                className="text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700"
+              >
+                {darkMode ? '☀️' : '🌙'}
+              </Button>
               <div className="flex items-center gap-2">
                 <Avatar className="w-8 h-8" style={{ backgroundColor: IBIS_RED }}>
                   <AvatarFallback className="text-white text-sm" style={{ backgroundColor: IBIS_RED }}>
@@ -467,7 +494,7 @@ const handleEditNote = (note: Note) => {
 
           {/* Calendar Section - Smaller (4 cols) */}
           <div className="lg:col-span-4">
-            <Card className="shadow-md border-0">
+            <Card className="shadow-md border-0 bg-white dark:bg-gray-800 dark:text-gray-100 transition-colors">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <CalendarDays className="w-5 h-5" style={{ color: IBIS_RED }} />
@@ -509,6 +536,11 @@ const handleEditNote = (note: Note) => {
           </div>
         </div>
       </main>
+      <footer className="border-t border-gray-200 dark:border-gray-700 mt-12">
+        <div className="max-w-7xl mx-auto px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+          © {new Date().getFullYear()} Nour. All rights reserved.
+        </div>
+      </footer>
     </div>
   );
 }
