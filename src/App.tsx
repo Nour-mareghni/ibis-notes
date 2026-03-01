@@ -12,6 +12,16 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { toast } from 'sonner';
 import { CalendarDays, LogOut, Plus, MessageSquare, Trash2, Edit2, Check } from 'lucide-react';
 import type { User as UserType, Note } from '@/types';
+import {
+  collection,
+  addDoc,
+  deleteDoc,
+  updateDoc,
+  doc,
+  onSnapshot
+} from "firebase/firestore";
+
+import { db } from "@/lib/firebase";
 
 // True red ibis color
 const IBIS_RED = '#FF0000';
@@ -39,19 +49,17 @@ const STAFF_USERS: UserType[] = [
 ];
 
 // Mock initial notes
-const INITIAL_NOTES: Note[] = [
 
-];
 
 function App() {
   const [currentUser, setCurrentUser] = useState<UserType | null>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [notes, setNotes] = useState<Note[]>(INITIAL_NOTES);
+  const [notes, setNotes] = useState<Note[]>([]);
   const [newNoteContent, setNewNoteContent] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [editingNote, setEditingNote] = useState<Note | null>(null);
+  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState('');
 
   // Check for saved session on mount
@@ -74,6 +82,28 @@ function App() {
     }
   };
 
+  useEffect(() => {
+  const unsubscribe = onSnapshot(collection(db, "notes"), (snapshot) => {
+    const notesData: Note[] = snapshot.docs.map((docSnap) => {
+      const data = docSnap.data();
+
+      return {
+        id: docSnap.id,
+        content: data.content,
+        date: data.date,
+        userId: data.userId,
+        userName: data.userName,
+        createdAt: data.createdAt,
+        done: data.done ?? false,
+      };
+    });
+
+    setNotes(notesData);
+  });
+
+  return () => unsubscribe();
+}, []);
+
   const handleLogout = () => {
     setCurrentUser(null);
     localStorage.removeItem('ibis_current_user');
@@ -82,56 +112,62 @@ function App() {
     toast.info('Déconnexion réussie');
   };
 
-  const handleAddNote = () => {
-    if (!newNoteContent.trim() || !currentUser) return;
+const handleAddNote = async () => {
+  if (!newNoteContent.trim() || !currentUser) return;
 
-    const newNote: Note = {
-      id: Date.now().toString(),
-      content: newNoteContent.trim(),
-      date: selectedDate.toISOString(),
-      userId: currentUser.id,
-      userName: currentUser.name,
-      createdAt: new Date().toISOString(),
-      done: false,
-    };
+  await addDoc(collection(db, "notes"), {
+    content: newNoteContent.trim(),
+    date: selectedDate.toISOString(),
+    userId: currentUser.id,
+    userName: currentUser.name,
+    createdAt: new Date().toISOString(),
+    done: false,
+  });
 
-    setNotes([...notes, newNote]);
-    setNewNoteContent('');
-    setIsAddDialogOpen(false);
-    toast.success('Note ajoutée avec succès');
-  };
+  setNewNoteContent('');
+  setIsAddDialogOpen(false);
+  toast.success('Note ajoutée avec succès');
+};
 
-  const handleDeleteNote = (noteId: string) => {
-    setNotes(notes.filter(n => n.id !== noteId));
-    toast.success('Note supprimée');
-  };
+const handleDeleteNote = async (noteId: string) => {
+  await deleteDoc(doc(db, "notes", noteId));
+  toast.success('Note supprimée');
+};
 
-  const handleEditNote = (note: Note) => {
-    setEditingNote(note);
-    setEditContent(note.content);
-  };
+const handleSaveEdit = async () => {
+  if (!editingNoteId || !editContent.trim()) return;
 
-  const handleSaveEdit = () => {
-    if (!editingNote || !editContent.trim()) return;
+  try {
+    const noteRef = doc(db, "notes", editingNoteId);
 
-    setNotes(notes.map(n => 
-      n.id === editingNote.id 
-        ? { ...n, content: editContent.trim() }
-        : n
-    ));
-    setEditingNote(null);
+    await updateDoc(noteRef, {
+      content: editContent.trim(),
+    });
+
+    setEditingNoteId(null);
     setEditContent('');
-    toast.success('Note modifiée avec succès');
-  };
+    toast.success("Note modifiée avec succès");
+  } catch (error) {
+    console.error("Update error:", error);
+    toast.error("Erreur lors de la modification");
+  }
+};
 
-  const handleToggleDone = (noteId: string) => {
-    setNotes(notes.map(n => 
-      n.id === noteId 
-        ? { ...n, done: !n.done }
-        : n
-    ));
-    toast.success('Statut mis à jour');
-  };
+const handleToggleDone = async (noteId: string) => {
+  const note = notes.find(n => n.id === noteId);
+  if (!note) return;
+
+  try {
+    await updateDoc(doc(db, "notes", noteId), {
+      done: !note.done,
+    });
+
+    toast.success("Statut mis à jour");
+  } catch (error) {
+    console.error(error);
+    toast.error("Erreur lors de la mise à jour");
+  }
+};
 
   const getNotesForDate = (date: Date) => {
     return notes.filter(note => isSameDay(parseISO(note.date), date));
@@ -140,7 +176,10 @@ function App() {
   const getDatesWithNotes = () => {
     return notes.map(note => parseISO(note.date));
   };
-
+const handleEditNote = (note: Note) => {
+  setEditingNoteId(note.id);
+  setEditContent(note.content);
+};
   // Login Screen
   if (!currentUser) {
     return (
@@ -338,7 +377,7 @@ function App() {
                             note.done ? 'border-green-300 bg-green-50' : 'border-gray-200'
                           }`}
                         >
-                          {editingNote?.id === note.id ? (
+                          {editingNoteId === note.id ? (
                             <div className="space-y-3">
                               <Textarea
                                 value={editContent}
@@ -349,7 +388,7 @@ function App() {
                                 <Button 
                                   variant="outline" 
                                   size="sm"
-                                  onClick={() => setEditingNote(null)}
+                                  onClick={() => setEditingNoteId(null)}
                                 >
                                   Annuler
                                 </Button>
