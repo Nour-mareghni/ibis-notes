@@ -257,16 +257,7 @@ const handleEditNote = (note: Note) => {
                 Se connecter
               </Button>
             </form>
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-500 text-center">
-                Comptes de démonstration :
-              </p>
-              <div className="mt-2 space-y-1 text-xs text-gray-400 text-center">
-                <p>marie@ibis.fr / marie123</p>
-                <p>pierre@ibis.fr / pierre123</p>
-                <p>sophie@ibis.fr / sophie123</p>
-              </div>
-            </div>
+
           </CardContent>
         </Card>
       </div>
