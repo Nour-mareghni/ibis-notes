@@ -43,7 +43,10 @@ const STAFF_USERS: UserType[] = [
   { id: '12', email: 'johan@accor.com', name: 'johan', password: 'ACCOR2026++' },
   { id: '13', email: 'antoine@accor.com', name: 'antoine', password: 'ACCOR2026++' },
   { id: '14', email: 'fatima@accor.com', name: 'fatima', password: 'ACCOR2026++' },
-  { id: '15', email: 'takwa@accor.com', name: 'takwa', password: 'takwa2001' },
+  { id: '15', email: 'nour@accor.com', name: 'nour', password: 'ACCOR2026++' },
+  { id: '16', email: 'godsha@accor.com', name: 'godsha', password: 'ACCOR2026++' },
+  { id: '17', email: 'extra@accor.com', name: 'extra', password: 'ACCOR2026++' }
+  
   
 
 ];
