@@ -23,9 +23,9 @@ import {
 
 import { db } from "@/lib/firebase";
 
-// True red ibis color
-const IBIS_RED = '#FF0000';
-const IBIS_RED_HOVER = '#CC0000';
+// Neutral interface colors
+const ACCENT_COLOR = '#334155';
+const ACCENT_HOVER = '#1e293b';
 
 // Mock staff users
 const STAFF_USERS: UserType[] = [
@@ -68,12 +68,22 @@ function App() {
 
   // Check for saved session on mount
   useEffect(() => {
-    const savedTheme = localStorage.getItem('ibis_theme');
+    for (const key of ['theme', 'current_user']) {
+      const legacyKey = `ibis_${key}`;
+      const savedValue = localStorage.getItem(legacyKey);
+      if (savedValue !== null) {
+        if (localStorage.getItem(`notes_${key}`) === null) {
+          localStorage.setItem(`notes_${key}`, savedValue);
+        }
+        localStorage.removeItem(legacyKey);
+      }
+    }
+    const savedTheme = localStorage.getItem('notes_theme');
     if (savedTheme === 'dark') {
       setDarkMode(true);
       document.documentElement.classList.add('dark');
     }
-    const savedUser = localStorage.getItem('ibis_current_user');
+    const savedUser = localStorage.getItem('notes_current_user');
     if (savedUser) {
       setCurrentUser(JSON.parse(savedUser));
     }
@@ -85,10 +95,10 @@ function App() {
 
   if (newTheme) {
     document.documentElement.classList.add('dark');
-    localStorage.setItem('ibis_theme', 'dark');
+    localStorage.setItem('notes_theme', 'dark');
   } else {
     document.documentElement.classList.remove('dark');
-    localStorage.setItem('ibis_theme', 'light');
+    localStorage.setItem('notes_theme', 'light');
   }
 };
 
@@ -97,7 +107,7 @@ function App() {
     const user = STAFF_USERS.find(u => u.email === email && u.password === password);
     if (user) {
       setCurrentUser(user);
-      localStorage.setItem('ibis_current_user', JSON.stringify(user));
+      localStorage.setItem('notes_current_user', JSON.stringify(user));
       toast.success(`Bienvenue, ${user.name} !`);
     } else {
       toast.error('Email ou mot de passe incorrect');
@@ -128,7 +138,7 @@ function App() {
 
   const handleLogout = () => {
     setCurrentUser(null);
-    localStorage.removeItem('ibis_current_user');
+    localStorage.removeItem('notes_current_user');
     setEmail('');
     setPassword('');
     toast.info('Déconnexion réussie');
@@ -208,18 +218,11 @@ const handleEditNote = (note: Note) => {
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
         <Card className="w-full max-w-md shadow-xl border-0">
           <CardHeader className="space-y-4 text-center pb-8">
-            <div className="flex justify-center">
-              <img 
-                src="https://upload.wikimedia.org/wikipedia/fr/thumb/d/d6/Ibis_H%C3%B4tel_logo_2012.png/250px-Ibis_H%C3%B4tel_logo_2012.png" 
-                alt="ibis Hôtel"
-                className="h-20 object-contain"
-              />
-            </div>
             <div>
               <CardTitle className="text-2xl font-bold text-gray-900">
-                ibis Paris Gare du Nord
+                Notes d’équipe
               </CardTitle>
-              <p className="text-sm text-gray-500 mt-1">Château-Landon</p>
+              <p className="text-sm text-gray-500 mt-1">Espace de travail partagé</p>
             </div>
             <div className="pt-2">
               <h2 className="text-lg font-semibold text-gray-700">Espace Personnel</h2>
@@ -253,9 +256,9 @@ const handleEditNote = (note: Note) => {
               <Button 
                 type="submit" 
                 className="w-full h-12 text-white font-semibold"
-                style={{ backgroundColor: IBIS_RED }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = IBIS_RED_HOVER}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = IBIS_RED}
+                style={{ backgroundColor: ACCENT_COLOR }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = ACCENT_HOVER}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ACCENT_COLOR}
               >
                 Se connecter
               </Button>
@@ -278,14 +281,9 @@ const handleEditNote = (note: Note) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
-              <img 
-                src="https://upload.wikimedia.org/wikipedia/fr/thumb/d/d6/Ibis_H%C3%B4tel_logo_2012.png/250px-Ibis_H%C3%B4tel_logo_2012.png" 
-                alt="ibis Hôtel"
-                className="h-10 object-contain"
-              />
-              <div className="hidden sm:block">
-                <h1 className="text-lg font-bold text-gray-900">ibis Paris Gare du Nord</h1>
-                <p className="text-xs text-gray-500">Château-Landon</p>
+              <div className="min-w-0">
+                <h1 className="text-lg font-bold text-gray-900">Notes d’équipe</h1>
+                <p className="text-xs text-gray-500">Espace de travail partagé</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
@@ -298,8 +296,8 @@ const handleEditNote = (note: Note) => {
                 {darkMode ? '☀️' : '🌙'}
               </Button>
               <div className="flex items-center gap-2">
-                <Avatar className="w-8 h-8" style={{ backgroundColor: IBIS_RED }}>
-                  <AvatarFallback className="text-white text-sm" style={{ backgroundColor: IBIS_RED }}>
+                <Avatar className="w-8 h-8" style={{ backgroundColor: ACCENT_COLOR }}>
+                  <AvatarFallback className="text-white text-sm" style={{ backgroundColor: ACCENT_COLOR }}>
                     {currentUser.name.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -311,10 +309,10 @@ const handleEditNote = (note: Note) => {
                 variant="ghost" 
                 size="sm" 
                 onClick={handleLogout}
-                className="text-gray-500 hover:bg-red-50"
-                style={{ '--hover-color': IBIS_RED } as React.CSSProperties}
+                className="text-gray-500 hover:bg-slate-100"
+                style={{ '--hover-color': ACCENT_COLOR } as React.CSSProperties}
               >
-                <LogOut className="w-4 h-4" style={{ color: IBIS_RED }} />
+                <LogOut className="w-4 h-4" style={{ color: ACCENT_COLOR }} />
               </Button>
             </div>
           </div>
@@ -330,7 +328,7 @@ const handleEditNote = (note: Note) => {
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <MessageSquare className="w-5 h-5" style={{ color: IBIS_RED }} />
+                    <MessageSquare className="w-5 h-5" style={{ color: ACCENT_COLOR }} />
                     Notes du {format(selectedDate, 'dd MMMM yyyy', { locale: fr })}
                   </CardTitle>
                   <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -338,7 +336,7 @@ const handleEditNote = (note: Note) => {
                       <Button 
                         size="sm" 
                         className="text-white"
-                        style={{ backgroundColor: IBIS_RED }}
+                        style={{ backgroundColor: ACCENT_COLOR }}
                       >
                         <Plus className="w-4 h-4 mr-1" />
                         Ajouter
@@ -370,7 +368,7 @@ const handleEditNote = (note: Note) => {
                           <Button 
                             onClick={handleAddNote}
                             className="text-white"
-                            style={{ backgroundColor: IBIS_RED }}
+                            style={{ backgroundColor: ACCENT_COLOR }}
                             disabled={!newNoteContent.trim()}
                           >
                             Ajouter
@@ -417,7 +415,7 @@ const handleEditNote = (note: Note) => {
                                   size="sm"
                                   onClick={handleSaveEdit}
                                   className="text-white"
-                                  style={{ backgroundColor: IBIS_RED }}
+                                  style={{ backgroundColor: ACCENT_COLOR }}
                                 >
                                   Enregistrer
                                 </Button>
@@ -460,18 +458,18 @@ const handleEditNote = (note: Note) => {
                                   <Button
                                     variant="ghost"
                                     size="sm"
-                                    className="h-7 w-7 p-0 text-gray-400 hover:bg-red-50"
+                                    className="h-7 w-7 p-0 text-gray-400 hover:bg-slate-100"
                                     onClick={() => handleEditNote(note)}
                                   >
-                                    <Edit2 className="w-3.5 h-3.5" style={{ color: IBIS_RED }} />
+                                    <Edit2 className="w-3.5 h-3.5" style={{ color: ACCENT_COLOR }} />
                                   </Button>
                                   <Button
                                     variant="ghost"
                                     size="sm"
-                                    className="h-7 w-7 p-0 text-gray-400 hover:bg-red-50"
+                                    className="h-7 w-7 p-0 text-gray-400 hover:bg-slate-100"
                                     onClick={() => handleDeleteNote(note.id)}
                                   >
-                                    <Trash2 className="w-3.5 h-3.5" style={{ color: IBIS_RED }} />
+                                    <Trash2 className="w-3.5 h-3.5" style={{ color: ACCENT_COLOR }} />
                                   </Button>
                                 </div>
                               </div>
@@ -491,7 +489,7 @@ const handleEditNote = (note: Note) => {
             <Card className="shadow-md border-0 bg-white dark:bg-gray-800 dark:text-gray-100 transition-colors">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <CalendarDays className="w-5 h-5" style={{ color: IBIS_RED }} />
+                  <CalendarDays className="w-5 h-5" style={{ color: ACCENT_COLOR }} />
                   Calendrier
                 </CardTitle>
               </CardHeader>
@@ -509,7 +507,7 @@ const handleEditNote = (note: Note) => {
                       hasNotes: {
                         fontWeight: 'bold',
                         textDecoration: 'underline',
-                        textDecorationColor: IBIS_RED,
+                        textDecorationColor: ACCENT_COLOR,
                         textDecorationThickness: '3px',
                       },
                     }}
@@ -517,11 +515,11 @@ const handleEditNote = (note: Note) => {
                 </div>
                 <div className="mt-4 flex flex-col gap-2 text-sm text-gray-500">
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded-full" style={{ backgroundColor: IBIS_RED }}></div>
+                    <div className="w-4 h-4 rounded-full" style={{ backgroundColor: ACCENT_COLOR }}></div>
                     <span>Date sélectionnée</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-b-3" style={{ borderBottom: `3px solid ${IBIS_RED}` }}></div>
+                    <div className="w-4 h-4 border-b-3" style={{ borderBottom: `3px solid ${ACCENT_COLOR}` }}></div>
                     <span>Notes disponibles</span>
                   </div>
                 </div>

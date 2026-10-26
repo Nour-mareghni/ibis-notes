@@ -10,29 +10,28 @@
     --card-foreground: 0 0% 10%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 10%;
-    --primary: 0 100% 50%;
+    --primary: 215 25% 27%;
     --primary-foreground: 0 0% 100%;
     --secondary: 0 0% 96%;
     --secondary-foreground: 0 0% 10%;
     --muted: 0 0% 96%;
     --muted-foreground: 0 0% 45%;
-    --accent: 0 100% 50%;
+    --accent: 215 25% 27%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 90%;
     --input: 0 0% 90%;
-    --ring: 0 100% 50%;
+    --ring: 215 25% 27%;
     --radius: 0.5rem;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 0 0% 26%;
-    --sidebar-primary: 0 100% 50%;
+    --sidebar-primary: 215 25% 27%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 0 0% 96%;
     --sidebar-accent-foreground: 0 0% 10%;
     --sidebar-border: 0 0% 91%;
-    --sidebar-ring: 0 100% 50%;
-    --ibis-red: #FF0000;
+    --sidebar-ring: 215 25% 27%;
   }
 }
 
@@ -72,8 +71,8 @@
 
 .custom-calendar .rdp {
   width: 100% !important;
-  --rdp-accent-color: #FF0000;
-  --rdp-background-color: #FF0000;
+  --rdp-accent-color: #334155;
+  --rdp-background-color: #334155;
 }
 
 .custom-calendar .rdp-months {
@@ -128,23 +127,23 @@
 }
 
 .custom-calendar .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
-  background-color: #fee2e2;
+  background-color: #f1f5f9;
 }
 
 .custom-calendar .rdp-day_selected {
-  background-color: #FF0000 !important;
+  background-color: #334155 !important;
   color: white !important;
   font-weight: 600;
 }
 
 .custom-calendar .rdp-day_selected:hover {
-  background-color: #CC0000 !important;
+  background-color: #1e293b !important;
 }
 
 .custom-calendar .rdp-day_today:not(.rdp-day_selected) {
-  color: #FF0000;
+  color: #334155;
   font-weight: 600;
-  border: 2px solid #FF0000;
+  border: 2px solid #334155;
 }
 
 .custom-calendar .rdp-nav_button {
@@ -157,7 +156,7 @@
 }
 
 .custom-calendar .rdp-nav_button:hover {
-  background-color: #fee2e2;
+  background-color: #f1f5f9;
 }
 
 .custom-calendar .rdp-caption {
@@ -190,6 +189,6 @@
 }
 
 /* Button hover states */
-button[style*="#FF0000"]:hover {
-  background-color: #CC0000 !important;
+button[style*="#334155"]:hover {
+  background-color: #1e293b !important;
 }
