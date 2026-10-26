@@ -4,191 +4,144 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 10%;
+    --background: 40 20% 96%;
+    --foreground: 210 22% 14%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card-foreground: 210 22% 14%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
-    --primary: 215 25% 27%;
+    --popover-foreground: 210 22% 14%;
+    --primary: 172 66% 25%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 10%;
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
-    --accent: 215 25% 27%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 215 25% 27%;
-    --radius: 0.5rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 0 0% 26%;
-    --sidebar-primary: 215 25% 27%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 96%;
-    --sidebar-accent-foreground: 0 0% 10%;
-    --sidebar-border: 0 0% 91%;
-    --sidebar-ring: 215 25% 27%;
+    --secondary: 40 15% 93%;
+    --secondary-foreground: 210 22% 14%;
+    --muted: 40 15% 93%;
+    --muted-foreground: 210 8% 44%;
+    --accent: 165 24% 93%;
+    --accent-foreground: 172 66% 22%;
+    --destructive: 0 65% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 40 10% 85%;
+    --input: 40 10% 80%;
+    --ring: 172 66% 25%;
+    --radius: 0px;
+    --action: #166b60;
+    --action-hover: #105248;
   }
-}
-
-@layer base {
-  * {
-    @apply border-border;
+  .dark {
+    --background: 210 18% 9%;
+    --foreground: 40 15% 93%;
+    --card: 210 16% 12%;
+    --card-foreground: 40 15% 93%;
+    --popover: 210 16% 12%;
+    --popover-foreground: 40 15% 93%;
+    --primary: 166 45% 62%;
+    --primary-foreground: 210 18% 9%;
+    --secondary: 210 14% 18%;
+    --secondary-foreground: 40 15% 93%;
+    --muted: 210 14% 18%;
+    --muted-foreground: 210 8% 65%;
+    --accent: 172 25% 20%;
+    --accent-foreground: 166 45% 75%;
+    --border: 210 12% 24%;
+    --input: 210 12% 30%;
+    --ring: 166 45% 62%;
+    --action: #267f71;
+    --action-hover: #1c695d;
   }
+  * { @apply border-border; }
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-feature-settings: 'ss01' on;
   }
+  button, input, textarea { font: inherit; }
+  button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
+  ::selection { background: #bce4d8; color: #143c34; }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+/* Square geometry throughout the interface, including portaled dialogs. */
+#root *, [role='dialog'], [role='dialog'] *, [data-sonner-toast] {
+  border-radius: 0 !important;
 }
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
+.login-shell {
+  background-color: hsl(var(--background));
+  background-image: linear-gradient(hsl(var(--border) / .35) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--border) / .35) 1px, transparent 1px);
+  background-size: 64px 64px;
+  padding-block: 48px;
 }
-
-::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
+.login-card {
+  border: 1px solid hsl(var(--border));
+  border-top: 4px solid var(--action);
+  box-shadow: 12px 12px 0 hsl(var(--border) / .4);
 }
-
-::-webkit-scrollbar-thumb:hover {
-  background: #a1a1a1;
-}
-
-/* Calendar custom styles - Bigger and better */
-.custom-calendar {
-  width: 100% !important;
-}
-
-.custom-calendar .rdp {
-  width: 100% !important;
-  --rdp-accent-color: #334155;
-  --rdp-background-color: #334155;
-}
-
-.custom-calendar .rdp-months {
-  width: 100% !important;
-}
-
-.custom-calendar .rdp-month {
-  width: 100% !important;
-}
-
-.custom-calendar .rdp-table {
-  width: 100% !important;
-  max-width: 100% !important;
-}
-
-.custom-calendar .rdp-head_row {
-  display: flex;
-  justify-content: space-between;
-}
-
-.custom-calendar .rdp-head_cell {
-  flex: 1;
-  text-align: center;
-  font-weight: 600;
-  color: #374151;
-  font-size: 0.875rem;
-  padding: 0.5rem 0;
-}
-
-.custom-calendar .rdp-row {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 0.25rem;
-}
-
-.custom-calendar .rdp-cell {
-  flex: 1;
-  text-align: center;
-  padding: 0.125rem;
-}
-
-.custom-calendar .rdp-button {
-  width: 100%;
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0.5rem;
-  font-size: 0.95rem;
-  font-weight: 500;
-  transition: all 0.2s;
-}
-
-.custom-calendar .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
-  background-color: #f1f5f9;
-}
-
-.custom-calendar .rdp-day_selected {
-  background-color: #334155 !important;
-  color: white !important;
-  font-weight: 600;
-}
-
-.custom-calendar .rdp-day_selected:hover {
-  background-color: #1e293b !important;
-}
-
-.custom-calendar .rdp-day_today:not(.rdp-day_selected) {
-  color: #334155;
-  font-weight: 600;
-  border: 2px solid #334155;
-}
-
-.custom-calendar .rdp-nav_button {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.custom-calendar .rdp-nav_button:hover {
-  background-color: #f1f5f9;
-}
-
-.custom-calendar .rdp-caption {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  padding: 0.5rem 0;
-  margin-bottom: 0.5rem;
-}
-
-.custom-calendar .rdp-caption_label {
+.login-card > div { padding: 32px; }
+.login-card > div + div { padding-top: 0; }
+.eyebrow {
+  color: hsl(var(--primary));
+  font-size: 10px;
   font-weight: 700;
-  font-size: 1.1rem;
-  color: #1f2937;
-  text-transform: capitalize;
+  letter-spacing: .19em;
+  line-height: 1.6;
 }
-
-.custom-calendar .rdp-nav {
-  position: absolute;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 0.5rem;
+.demo-panel {
+  border-color: hsl(var(--border));
+  border-left: 3px solid var(--action);
+  background: hsl(var(--muted));
+  line-height: 1.8;
 }
-
-/* Calendar wrapper for better sizing */
-.calendar-wrapper {
-  width: 100%;
+.app-shell { background: hsl(var(--background)); }
+.app-header {
+  background: hsl(var(--card) / .96);
+  border-color: hsl(var(--border));
+  backdrop-filter: blur(16px);
 }
+.app-header h1 { letter-spacing: -.035em; }
+.workspace-intro { max-width: 760px; }
+.workspace-intro h2 { line-height: 1.15; }
+.workspace-card {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  box-shadow: none;
+}
+.workspace-card > div:first-child { border-bottom: 1px solid hsl(var(--border)); padding: 24px; }
+.workspace-card > div + div { padding-top: 24px; }
+.note-card { background: hsl(var(--card)); border-left: 3px solid var(--action); }
+.note-card:hover { background: hsl(var(--muted) / .45); }
+input, textarea { background: hsl(var(--card)) !important; box-shadow: none !important; }
+input:focus-visible, textarea:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
+button { transition: background-color .15s, color .15s, border-color .15s; }
+button[style*='--action']:hover { background-color: var(--action-hover) !important; }
 
-/* Button hover states */
-button[style*="#334155"]:hover {
-  background-color: #1e293b !important;
+/* Calendar v9 layout and explicit sizing for the Tailwind 3 build. */
+.custom-calendar { width: 100%; --cell-size: 36px; padding: 0; }
+.custom-calendar .rdp-months, .custom-calendar .rdp-month { width: 100%; }
+.custom-calendar .rdp-month_caption { height: 40px; padding-inline: 40px; }
+.custom-calendar .rdp-caption_label { font-weight: 600; text-transform: capitalize; }
+.custom-calendar .rdp-button_previous, .custom-calendar .rdp-button_next { width: 36px; height: 36px; }
+.custom-calendar .rdp-weekdays { padding-bottom: 8px; border-bottom: 1px solid hsl(var(--border)); }
+.custom-calendar .rdp-weekday { font-size: 11px; font-weight: 600; }
+.custom-calendar .rdp-day { min-width: 0; }
+.custom-calendar .rdp-day button { width: 100%; min-height: 36px; height: auto; aspect-ratio: 1; }
+.custom-calendar .rdp-today { background: hsl(var(--accent)); color: hsl(var(--accent-foreground)); }
+.custom-calendar button[data-selected-single='true'] { background: var(--action); color: white; }
+.custom-calendar button[data-selected-single='true']:hover { background: var(--action-hover); }
+
+/* Keep existing utility-colored content consistent with both themes. */
+.dark :is(.text-gray-900, .text-gray-800, .text-gray-700, .text-slate-900, .text-slate-800) { color: hsl(var(--foreground)); }
+.dark :is(.text-gray-600, .text-gray-500, .text-slate-600) { color: hsl(var(--muted-foreground)); }
+.dark .bg-gray-200 { background: hsl(var(--muted)); }
+.dark .bg-green-50 { background: #15372d; }
+.dark .text-green-600 { color: #7bd6ae; }
+.dark :is(.hover\:bg-slate-100, .hover\:bg-gray-200):hover { background: hsl(var(--muted)); }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: hsl(var(--border)); }
+@media (max-width: 480px) {
+  .login-card > div { padding: 24px; }
+  .workspace-card > div:first-child { padding: 20px; }
+  .app-header h1 { font-size: 16px; }
+  .app-header p { font-size: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
 }

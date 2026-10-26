@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { toast } from 'sonner';
-import { CalendarDays, LogOut, Plus, MessageSquare, Trash2, Edit2, Check } from 'lucide-react';
+import { CalendarDays, LogOut, Plus, MessageSquare, Trash2, Edit2, Check, Moon, Sun, ArrowRight } from 'lucide-react';
 import type { User as UserType, Note } from '@/types';
 import {
   collection,
@@ -24,8 +24,8 @@ import {
 import { db } from "@/lib/firebase";
 
 // Neutral interface colors
-const ACCENT_COLOR = '#334155';
-const ACCENT_HOVER = '#1e293b';
+const ACCENT_COLOR = 'var(--action)';
+const ACCENT_HOVER = 'var(--action-hover)';
 
 // Public demo account
 const DEMO_USER: UserType = {
@@ -206,11 +206,12 @@ const handleEditNote = (note: Note) => {
   // Login Screen
   if (!currentUser) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md shadow-xl border-0">
-          <CardHeader className="space-y-4 text-center pb-8">
+      <div className="login-shell min-h-screen flex items-center justify-center p-4">
+        <Card className="login-card w-full max-w-md">
+          <CardHeader className="space-y-5 pb-8">
             <div>
-              <CardTitle className="text-2xl font-bold text-gray-900">
+              <p className="eyebrow mb-4">VOTRE ESPACE PARTAGÉ</p>
+              <CardTitle className="text-3xl font-semibold tracking-tight text-gray-900">
                 Notes d’équipe
               </CardTitle>
               <p className="text-sm text-gray-500 mt-1">Espace de travail partagé</p>
@@ -251,10 +252,10 @@ const handleEditNote = (note: Note) => {
                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = ACCENT_HOVER}
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = ACCENT_COLOR}
               >
-                Se connecter
+                Se connecter <ArrowRight className="ml-auto h-4 w-4" />
               </Button>
             </form>
-            <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+            <div className="demo-panel mt-6 border p-4 text-sm text-slate-600">
               <p className="font-semibold text-slate-800">Compte de démonstration</p>
               <p className="mt-1">Utilisez ce compte pour découvrir le site.</p>
               <p className="mt-3">Email : <span className="font-medium text-slate-900">{DEMO_USER.email}</span></p>
@@ -272,11 +273,11 @@ const handleEditNote = (note: Note) => {
   const datesWithNotes = getDatesWithNotes();
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <div className="app-shell min-h-screen transition-colors duration-300">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
+      <header className="app-header border-b sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-20">
             <div className="flex items-center gap-3">
               <div className="min-w-0">
                 <h1 className="text-lg font-bold text-gray-900">Notes d’équipe</h1>
@@ -288,9 +289,10 @@ const handleEditNote = (note: Note) => {
                 variant="ghost"
                 size="sm"
                 onClick={toggleTheme}
+                aria-label={darkMode ? "Activer le thème clair" : "Activer le thème sombre"}
                 className="text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700"
               >
-                {darkMode ? '☀️' : '🌙'}
+                {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </Button>
               <div className="flex items-center gap-2">
                 <Avatar className="w-8 h-8" style={{ backgroundColor: ACCENT_COLOR }}>
@@ -306,6 +308,7 @@ const handleEditNote = (note: Note) => {
                 variant="ghost" 
                 size="sm" 
                 onClick={handleLogout}
+                aria-label="Se déconnecter"
                 className="text-gray-500 hover:bg-slate-100"
                 style={{ '--hover-color': ACCENT_COLOR } as React.CSSProperties}
               >
@@ -317,13 +320,18 @@ const handleEditNote = (note: Note) => {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+        <div className="workspace-intro mb-8">
+          <p className="eyebrow">ESPACE DE TRAVAIL</p>
+          <h2 className="mt-2 text-3xl sm:text-4xl font-semibold tracking-tight">Une équipe, une longueur d’avance.</h2>
+          <p className="mt-3 text-sm text-gray-500">Vos notes et vos priorités, au même endroit.</p>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Notes Section - Main focus (8 cols) */}
           <div className="lg:col-span-8">
-            <Card className="shadow-md border-0 h-full">
+            <Card className="workspace-card h-full">
               <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-3">
                   <CardTitle className="text-lg flex items-center gap-2">
                     <MessageSquare className="w-5 h-5" style={{ color: ACCENT_COLOR }} />
                     Notes du {format(selectedDate, 'dd MMMM yyyy', { locale: fr })}
@@ -389,7 +397,7 @@ const handleEditNote = (note: Note) => {
                       {selectedDateNotes.map((note) => (
                         <div 
                           key={note.id} 
-                          className={`bg-white border rounded-lg p-4 hover:shadow-md transition-shadow ${
+                          className={`note-card border p-5 transition-colors ${
                             note.done ? 'border-green-300 bg-green-50' : 'border-gray-200'
                           }`}
                         >
@@ -483,7 +491,7 @@ const handleEditNote = (note: Note) => {
 
           {/* Calendar Section - Smaller (4 cols) */}
           <div className="lg:col-span-4">
-            <Card className="shadow-md border-0 bg-white dark:bg-gray-800 dark:text-gray-100 transition-colors">
+            <Card className="workspace-card bg-white dark:bg-gray-800 dark:text-gray-100 transition-colors">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <CalendarDays className="w-5 h-5" style={{ color: ACCENT_COLOR }} />
@@ -493,6 +501,7 @@ const handleEditNote = (note: Note) => {
               <CardContent>
                 <div className="calendar-wrapper">
                   <Calendar
+                    locale={fr}
                     mode="single"
                     selected={selectedDate}
                     onSelect={(date) => date && setSelectedDate(date)}
@@ -512,7 +521,7 @@ const handleEditNote = (note: Note) => {
                 </div>
                 <div className="mt-4 flex flex-col gap-2 text-sm text-gray-500">
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 rounded-full" style={{ backgroundColor: ACCENT_COLOR }}></div>
+                    <div className="w-4 h-4 rounded-none" style={{ backgroundColor: ACCENT_COLOR }}></div>
                     <span>Date sélectionnée</span>
                   </div>
                   <div className="flex items-center gap-2">
