@@ -27,31 +27,13 @@ import { db } from "@/lib/firebase";
 const ACCENT_COLOR = '#334155';
 const ACCENT_HOVER = '#1e293b';
 
-// Mock staff users
-const STAFF_USERS: UserType[] = [
-  { id: '1', email: 'aita@accor.com', name: 'aita', password: 'ACCOR2026++' },
-  { id: '2', email: 'amine@accor.com', name: 'amine', password: 'ACCOR2026++' },
-  { id: '3', email: 'angelique@accor.com', name: 'angelique', password: 'ACCOR2026++' },
-  { id: '4', email: 'julieta@accor.com', name: 'julieta', password: 'ACCOR2026++' },
-  { id: '5', email: 'anais@accor.com', name: 'anais', password: 'ACCOR2026++' },
-  { id: '6', email: 'maty@accor.com', name: 'maty', password: 'ACCOR2026++' },
-  { id: '7', email: 'elena@accor.com', name: 'elena', password: 'ACCOR2026++' },
-  { id: '8', email: 'rubel@accor.com', name: 'rubel', password: 'ACCOR2026++' },
-  { id: '9', email: 'ali@accor.com', name: 'ali', password: 'ACCOR2026++' },
-  { id: '10', email: 'abdoulah@accor.com', name: 'abdoulah', password: 'ACCOR2026++' },
-  { id: '11', email: 'meriam@accor.com', name: 'meriam', password: 'ACCOR2026++' },
-  { id: '12', email: 'johan@accor.com', name: 'johan', password: 'ACCOR2026++' },
-  { id: '13', email: 'antoine@accor.com', name: 'antoine', password: 'ACCOR2026++' },
-  { id: '14', email: 'fatima@accor.com', name: 'fatima', password: 'ACCOR2026++' },
-  { id: '15', email: 'nour@accor.com', name: 'nour', password: 'ACCOR2026++' },
-  { id: '16', email: 'godsha@accor.com', name: 'godsha', password: 'ACCOR2026++' },
-  { id: '17', email: 'extra@accor.com', name: 'extra', password: 'ACCOR2026++' }
-  
-  
-
-];
-
-// Mock initial notes
+// Public demo account
+const DEMO_USER: UserType = {
+  id: 'demo',
+  email: 'test@notes.com',
+  name: 'Test',
+  password: 'Test1234',
+};
 
 
 function App() {
@@ -85,7 +67,16 @@ function App() {
     }
     const savedUser = localStorage.getItem('notes_current_user');
     if (savedUser) {
-      setCurrentUser(JSON.parse(savedUser));
+      try {
+        const user = JSON.parse(savedUser);
+        if (user.id === DEMO_USER.id && user.email === DEMO_USER.email && user.password === DEMO_USER.password) {
+          setCurrentUser(DEMO_USER);
+        } else {
+          localStorage.removeItem('notes_current_user');
+        }
+      } catch {
+        localStorage.removeItem('notes_current_user');
+      }
     }
   }, []);
 
@@ -104,7 +95,7 @@ function App() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    const user = STAFF_USERS.find(u => u.email === email && u.password === password);
+    const user = email === DEMO_USER.email && password === DEMO_USER.password ? DEMO_USER : null;
     if (user) {
       setCurrentUser(user);
       localStorage.setItem('notes_current_user', JSON.stringify(user));
@@ -263,6 +254,12 @@ const handleEditNote = (note: Note) => {
                 Se connecter
               </Button>
             </form>
+            <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+              <p className="font-semibold text-slate-800">Compte de démonstration</p>
+              <p className="mt-1">Utilisez ce compte pour découvrir le site.</p>
+              <p className="mt-3">Email : <span className="font-medium text-slate-900">{DEMO_USER.email}</span></p>
+              <p>Mot de passe : <span className="font-medium text-slate-900">{DEMO_USER.password}</span></p>
+            </div>
 
           </CardContent>
         </Card>
